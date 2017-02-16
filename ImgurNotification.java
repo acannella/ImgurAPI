@@ -2,7 +2,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -46,12 +45,12 @@ public class ImgurNotification {
 		
 		
 		
-		
+		System.out.println(httpResponse.getStatusLine());
 		
 		return notifications;
 	}
 	
-	public String notificationInfo(String notifID) throws ClientProtocolException, IOException{
+	public String notificationInfo(String notifID) throws IOException{
 		
 		String notificationURL="https://api.imgur.com/3/notification/"+notifID;
 		
@@ -75,12 +74,12 @@ public class ImgurNotification {
 		
 		String notifiInfo=response.toString();
 		
-		
+		System.out.println(httpResponse.getStatusLine());
 		
 		return notifiInfo;
 	}
 	
-	public void markViewed(String notifID) throws ClientProtocolException, IOException{
+	public void markViewed(String notifID) throws IOException{
 		String markURL="https://api.imgur.com/3/notification/"+notifID;
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpPost httpPost = new HttpPost(markURL);
@@ -98,9 +97,7 @@ public class ImgurNotification {
 		}
 		reader.close();
 
-		//add it a check to see which response is sent back, the display text for success or failure
-		String toJSON=response.toString();
-		System.out.println(toJSON);
+		System.out.println(httpResponse.getStatusLine());
 		httpClient.close();
 	}
 	

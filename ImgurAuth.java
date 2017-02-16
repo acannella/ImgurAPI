@@ -18,28 +18,28 @@ import org.json.simple.parser.ParseException;
 
 
 public class ImgurAuth {	
-	private String ID;	
-	private String SECRET;
+	private String clientID;	
+	private String secret;
 	private String accessToken;
 	private String refreshToken;
 	private String pin;
 	
 	
 
-	public ImgurAuth(String clientID,String secret){
-		ID=clientID;
-		SECRET=secret;
+	public ImgurAuth(String id,String asecret){
+		clientID=id;
+		secret=asecret;
 		accessToken=null;
 		refreshToken=null;
 		
 	}
 	
 	public String getClientID(){
-		return ID;
+		return clientID;
 	}
 	
 	public String getPinURL(){
-		return "https://api.imgur.com/oauth2/authorize?client_id="+ID+"&response_type=pin";
+		return "https://api.imgur.com/oauth2/authorize?client_id="+clientID+"&response_type=pin";
 	}
 	public void generateAccessToken(String aPin) throws ParseException, ClientProtocolException, IOException{
 		System.out.println("Beginning Authentication");
@@ -49,8 +49,8 @@ public class ImgurAuth {
 		String toJSON=null;
 		
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-		urlParameters.add(new BasicNameValuePair("client_id",ID));
-		urlParameters.add(new BasicNameValuePair("client_secret",SECRET));
+		urlParameters.add(new BasicNameValuePair("client_id",clientID));
+		urlParameters.add(new BasicNameValuePair("client_secret",secret));
 		urlParameters.add(new BasicNameValuePair("grant_type","pin"));
 		urlParameters.add(new BasicNameValuePair("pin",pin));
 		HttpEntity postParams=null;
@@ -97,8 +97,8 @@ public class ImgurAuth {
 		String toJSON=null;
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair("refresh_token",refreshToken));
-		urlParameters.add(new BasicNameValuePair("client_id",ID));
-		urlParameters.add(new BasicNameValuePair("client_secret",SECRET));
+		urlParameters.add(new BasicNameValuePair("client_id",clientID));
+		urlParameters.add(new BasicNameValuePair("client_secret",secret));
 		urlParameters.add(new BasicNameValuePair("grant_type","refresh_token"));
 		HttpEntity postParams=null;
 	
@@ -136,15 +136,11 @@ public class ImgurAuth {
 	
 	
 	public String getAccessToken(){
-		//depending on how other classes are linked together, this can be used to pass access token
-		if(accessToken == null)
-			System.out.println("Access Token has not been generated, returning null"); 
+		//depending on how other classes are linked together, this can be used to pass access token 
 		return accessToken;
 	}
 	
 	public String getRefreshToken(){
-		if(refreshToken == null)
-			System.out.println("Refresh Token has not been generated, returning null");
 		return refreshToken;
 	}
 

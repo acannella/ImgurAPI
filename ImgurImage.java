@@ -54,7 +54,7 @@ public void accDeleteImage(String accessToken, String imageID) throws ClientProt
 		reader.close();
 	
 
-	//add it a check to see which response is sent back, the display text for success or failure
+	System.out.println(httpResponse.getStatusLine());
 	String toJSON=response.toString();
 	System.out.println(toJSON);
 	
@@ -87,7 +87,7 @@ public void anonDeleteImage(String imageID) throws ClientProtocolException, IOEx
 		reader.close();
 	
 
-	//add it a check to see which response is sent back, the display text for success or failure
+	System.out.println(httpResponse.getStatusLine());
 	String toJSON=response.toString();
 	System.out.println(toJSON);
 	
@@ -132,7 +132,7 @@ public String sendImageGET(String imageID) throws ClientProtocolException, IOExc
 	
 			httpClient.close();
 		
-		System.out.println(imageInfo);
+		System.out.println(httpResponse.getStatusLine());
 		return imageInfo;
 		
 
@@ -161,19 +161,19 @@ public void accUploadImage(String accessToken, String aPath) throws IOException{
 	
 	HttpEntity postParams=null;
 	
-		postParams = new UrlEncodedFormEntity(urlParameters);
-		httpPost.setEntity(postParams);
+	postParams = new UrlEncodedFormEntity(urlParameters);
+	httpPost.setEntity(postParams);
 	
 	
 
 	
 	CloseableHttpResponse httpResponse=null;
 	
-		httpResponse = httpClient.execute(httpPost);
+	httpResponse = httpClient.execute(httpPost);
 	
 	BufferedReader reader=null;
 	
-		reader = new BufferedReader(new InputStreamReader(
+	reader = new BufferedReader(new InputStreamReader(
 			httpResponse.getEntity().getContent()));
 	
 
@@ -188,12 +188,11 @@ public void accUploadImage(String accessToken, String aPath) throws IOException{
 		}
 	
 
-		reader.close();
+	reader.close();
 	
 	
-	String toJSON=response.toString();
-	System.out.println(toJSON);
-	System.out.println("Upload complete.");
+	
+	System.out.println(httpResponse.getStatusLine());
 		
 }
 
@@ -208,15 +207,10 @@ public void anonUploadImage(String aPath) throws IOException{
 	ByteArrayOutputStream bos=new ByteArrayOutputStream();
 	String filePath=aPath;
 	
+	filePath=filePath.replace("\\", "\\\\");
 	
-		
-		
-		filePath=filePath.replace("\\", "\\\\");
-	
-		
-		
-			toEncode=ImageIO.read(new File(filePath));
-			ImageIO.write(toEncode,"jpg",bos);
+	toEncode=ImageIO.read(new File(filePath));
+	ImageIO.write(toEncode,"jpg",bos);
 			
 	
 	byte[] imageBytes = bos.toByteArray();
@@ -256,11 +250,9 @@ public void anonUploadImage(String aPath) throws IOException{
 		}
 	
 	
-		reader.close();
+	reader.close();
 	
-	String toJSON=response.toString();
-	System.out.println(toJSON);
-	System.out.println("Upload complete.");
+	System.out.println(httpResponse.getStatusLine());
 	
 }
 
@@ -302,11 +294,9 @@ public void accUpdateImageInfo(String accessToken,String imageID,String title, S
 		reader.close();
 	
 
-	//add it a check to see which response is sent back, the display text for success or failure
-	String toJSON=response.toString();
-	System.out.println(toJSON);
+	System.out.println(httpResponse.getStatusLine());
 	
-		httpClient.close();
+	httpClient.close();
 	
 	
 }
@@ -323,12 +313,12 @@ public void anonUpdateImageInfo(String deleteHash,String imageID,String title, S
 	
 	HttpEntity postParams=null;
 	
-		postParams = new UrlEncodedFormEntity(urlParameters);
-		httpPost.setEntity(postParams);
+	postParams = new UrlEncodedFormEntity(urlParameters);
+	httpPost.setEntity(postParams);
 	
-		CloseableHttpResponse httpResponse=null;
+	CloseableHttpResponse httpResponse=null;
 	
-		httpResponse = httpClient.execute(httpPost);
+	httpResponse = httpClient.execute(httpPost);
 	
 	BufferedReader reader=null;
 	
@@ -349,11 +339,9 @@ public void anonUpdateImageInfo(String deleteHash,String imageID,String title, S
 		reader.close();
 	
 
-	//add it a check to see which response is sent back, the display text for success or failure
-	String toJSON=response.toString();
-	System.out.println(toJSON);
+	System.out.println(httpResponse.getStatusLine());
 	
-		httpClient.close();
+	httpClient.close();
 	
 	
 }
@@ -384,11 +372,9 @@ public void favoriteImage(String accessToken, String imageID) throws ClientProto
 		reader.close();
 	
 
-	//add it a check to see which response is sent back, the display text for success or failure
-	String toJSON=response.toString();
-	System.out.println(toJSON);
+	System.out.println(httpResponse.getStatusLine());
 	
-		httpClient.close();
+	httpClient.close();
 	
 }
 

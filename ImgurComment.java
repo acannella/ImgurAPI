@@ -4,8 +4,10 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -13,23 +15,21 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
-//TO-DO: Determine if you need to send access token--probably do
+//TO-DO: Should these all be static?
 
 public class ImgurComment {
-	private String ID;
 	
-	public ImgurComment(String clientID){
-		ID=clientID;
-	}
-	
-	public String getComment(String commentID) throws ClientProtocolException, IOException{
+	public static String getComment(String commentID,String clientID) throws ClientProtocolException, IOException{
 		String commentInfo=null;
 		String commentLink="https://api.imgur.com/3/comment/"+commentID;
 		
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet(commentLink);
-		httpGet.setHeader("Authorization","client-id "+ID);
+		httpGet.setHeader("Authorization","client-id "+clientID);
 		
 		CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
 		
@@ -49,23 +49,30 @@ public class ImgurComment {
 		
 		httpClient.close();
 		
-		
+		System.out.println(httpResponse.getStatusLine());
 		
 		return commentInfo;
 	}
 	
-	public void createComment(String imageID, String comment) throws ClientProtocolException, IOException{
+	public static String createComment(String imageID, String comment,String accessToken) throws IOException, ParseException{
+		JSONParser parser = new JSONParser();
 		String createComment= "https://api.imgur.com/3/comment";
+		String commentID=null;
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		String toJSON=null;
 		
 		HttpPost post=new HttpPost(createComment);
-		post.setHeader("Authorization","client-id "+ID);
+		post.setHeader("Authorization","Bearer "+accessToken);
+		
 		
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair("image_id",imageID));
 		urlParameters.add(new BasicNameValuePair("comment",comment));
 	
+		HttpEntity postParams=null;
+		
+		postParams = new UrlEncodedFormEntity(urlParameters);
+		post.setEntity(postParams);
 	
 		CloseableHttpResponse httpResponse;
 		
@@ -81,15 +88,20 @@ public class ImgurComment {
 			}
 			reader.close();
 			toJSON=response.toString();
-		
 			
+			JSONObject jsonResponse=null;
 		
+			jsonResponse = (JSONObject) parser.parse(toJSON);
+			toJSON=jsonResponse.get("data").toString();
+			jsonResponse= (JSONObject) parser.parse(toJSON);
+			commentID=jsonResponse.get("id").toString();
+			System.out.println(httpResponse.getStatusLine());
+			return commentID;
 		
-		System.out.println(toJSON);
 		
 	}
-	//definitely will need to logged in to do this one
-	public void deleteComment(String commentID,String accessToken ) throws ClientProtocolException, IOException{
+	
+	public static void deleteComment(String commentID,String accessToken ) throws ClientProtocolException, IOException{
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpDelete httpDelete = new HttpDelete("https://api.imgur.com/3/comment/"+commentID);
 		httpDelete.setHeader("Authorization","Bearer "+accessToken);
@@ -115,20 +127,18 @@ public class ImgurComment {
 			reader.close();
 		
 
-		//add it a check to see which response is sent back, the display text for success or failure
-		String toJSON=response.toString();
-		System.out.println(toJSON);
+			System.out.println(httpResponse.getStatusLine());
 	
 			httpClient.close();
 		
 	}
 	
-	public String getRepliesComment(String commentID) throws ClientProtocolException, IOException{
+	public static String getRepliesComment(String commentID,String clientID) throws ClientProtocolException, IOException{
 		String comment=null;
 		String parentComment="https://api.imgur.com/3/comment/"+commentID+"/replies";
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet(parentComment);
-		httpGet.setHeader("Authorization","client-id "+ID);
+		httpGet.setHeader("Authorization","client-id "+clientID);
 		
 		CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
 		
@@ -147,18 +157,18 @@ public class ImgurComment {
 	    comment=response.toString();
 		
 		httpClient.close();
-		
+		System.out.println(httpResponse.getStatusLine());
 		
 		return comment;
 	}
 	
-	public void createReply(String imageID, String comment, String commentID) throws ClientProtocolException, IOException{
+	public static void createReply(String imageID, String comment, String commentID,String accessToken) throws ClientProtocolException, IOException{
 		String voteLink="https://api.imgur.com/3/comment/" +commentID;
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		String toJSON=null;
 		
 		HttpPost post=new HttpPost(voteLink);
-		post.setHeader("Authorization","client-id "+ID);
+		post.setHeader("Authorization","Bearer "+accessToken);
 		
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair("image_id",imageID));
@@ -185,13 +195,12 @@ public class ImgurComment {
 		
 	}
 	
-	public void commentVote(String commentID, String vote) throws ClientProtocolException, IOException{
+	public static void commentVote(String commentID, String vote,String accessToken) throws ClientProtocolException, IOException{
 		String voteLink="https://api.imgur.com/3/comment/" +commentID+  "/vote/"+vote;
 		CloseableHttpClient httpClient = HttpClients.createDefault();
-		String toJSON=null;
 		
 		HttpPost post=new HttpPost(voteLink);
-		post.setHeader("Authorization","client-id "+ID);
+		post.setHeader("Authorization","Bearer "+accessToken);
 	
 	
 		CloseableHttpResponse httpResponse;
@@ -207,17 +216,34 @@ public class ImgurComment {
 				response.append(inputLine);
 			}
 			reader.close();
-			toJSON=response.toString();
-		
-			System.out.println("An error occurred during the Post Phase.");
 			
-	
-			System.out.println("Response from server could no be translated to JSON Format");
-		
-		System.out.println(toJSON);
+			System.out.println(httpResponse.getStatusLine());
+			
 	}
 	
-	public void reportComment(String commentID, int reason){
+	public static void reportComment(String commentID,String accessToken, int reason) throws IOException{
+		String reportLink="https://api.imgur.com/3/comment/" +commentID+  "/report";
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+		
+		HttpPost post=new HttpPost(reportLink);
+		post.setHeader("Authorization","Bearer "+accessToken);
+	
+	
+		CloseableHttpResponse httpResponse;
+		
+			httpResponse = httpClient.execute(post);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					httpResponse.getEntity().getContent()));
+		
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = reader.readLine()) != null) {
+				response.append(inputLine);
+			}
+			reader.close();
+			
+			System.out.println(httpResponse.getStatusLine());
 		
 	}
 	
