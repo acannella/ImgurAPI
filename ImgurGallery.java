@@ -14,35 +14,18 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
-///TO-DO: ImgurGallery GETs should probably be static, POSTs can be non static?
 import org.json.simple.parser.ParseException;
-
-///TO-DO: add in try and catches
-///If so, then ImgurApp will need to pass the access token via method
-
 
 
 public class ImgurGallery {
-	private String galleryLink="https://api.imgur.com/3/gallery/hot/viral/0";
+	private static String galleryLink="https://api.imgur.com/3/gallery/hot/viral/0";
 	private String searchLink="";
-	private String section;
-	private String sort;
-	private int page;
-	private String window;
-	private String showViral;
-	private String ID;
-	private String accessToken;
+	private static String section="hot";
+	private static String sort="viral";
+	private static String page="0";
+	private static String window="day";
+	private static String showViral="true";
 	
-	
-	public ImgurGallery(String id){
-		ID=id;
-		section="hot";
-		sort="viral";
-		page=0;
-		window="day";
-		showViral="true";
-		
-	}
 	
 	public void setSection(String aSection){
 		section=aSection;
@@ -58,7 +41,7 @@ public class ImgurGallery {
 				section + "/" + sort + "/"+window+"/" + page +"?"+showViral;
 	}
 	
-	public void setPage(int aPage){
+	public void setPage(String aPage){
 		page=aPage;
 		
 		galleryLink="https://api.imgur.com/3/gallery/"+ 
@@ -83,16 +66,12 @@ public class ImgurGallery {
 	public String getGalleryLink(){
 		return galleryLink;
 	}
-	public void setAccessToken(String aToken){
-		accessToken=aToken;
-	}
-	
 	
 	//return String based on link--Gallery Images
-	public String sendGalleryGET() throws IOException{
+	public String getGallery(String clientID) throws IOException{
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet(galleryLink);
-		httpGet.setHeader("Authorization","client-id "+ID);
+		httpGet.setHeader("Authorization","client-id "+clientID);
 		
 		CloseableHttpResponse httpResponse=null;
 		
@@ -125,11 +104,11 @@ public class ImgurGallery {
 	}
 	
 	//return String representation of JSON based on search--Gallery Images maybe album images?
-	public String searchGallery(String query,String index,String value) throws IOException, ParseException{
+	public String searchGallery(String query,String index,String value,String clientID) throws IOException, ParseException{
 		 searchLink=searchLink+query+"="+index+":"+value;
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet(searchLink);
-		httpGet.setHeader("Authorization","client-id "+ID);
+		httpGet.setHeader("Authorization","client-id "+clientID);
 		
 		
 		CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
@@ -153,27 +132,23 @@ public class ImgurGallery {
 		return searchedImages;
 	}
 	
-	public String getRandomGalleryImages() throws IOException{
+	public String getRandomGalleryImages(String clientID) throws IOException{
 		
 		String randomLink="https://api.imgur.com/3/gallery/random/random/";
 		
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet(randomLink);
-		httpGet.setHeader("Authorization","client-id "+ID);
+		httpGet.setHeader("Authorization","client-id "+clientID);
 		
 		CloseableHttpResponse httpResponse=null;
 	
 			httpResponse = httpClient.execute(httpGet);
 		
-		
-
 		BufferedReader reader=null;
 		
 			reader = new BufferedReader(new InputStreamReader(
 					httpResponse.getEntity().getContent()));
 		
-		
-
 		String inputLine;
 		StringBuffer response = new StringBuffer();
 
@@ -187,8 +162,6 @@ public class ImgurGallery {
 
 		String randGalleryImages=response.toString();
 		
-		
-		
 			httpClient.close();
 		
 		
@@ -196,13 +169,12 @@ public class ImgurGallery {
 		
 	}
 	
-	public String getAlbumInfo(String id) throws ClientProtocolException, IOException, ParseException{
-		String albumLink = "https://api.imgur.com/3/gallery/album/" + id;
+	public String getAlbumInfo(String clientID, String albumID) throws ClientProtocolException, IOException, ParseException{
+		String albumLink = "https://api.imgur.com/3/gallery/album/" + albumID;
 		
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet(albumLink);
-		httpGet.setHeader("Authorization","client-id "+ID);
-		
+		httpGet.setHeader("Authorization","client-id "+clientID);
 		
 		CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
 		
@@ -219,8 +191,6 @@ public class ImgurGallery {
 		reader.close();
 
 		String albumInfo=response.toString();
-		
-		
 		
 		httpClient.close();
 		
@@ -243,8 +213,6 @@ public class ImgurGallery {
 		
 			postParams = new UrlEncodedFormEntity(urlParameters);
 			httpPost.setEntity(postParams);
-		
-		
 		
 		
 		CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
@@ -270,13 +238,13 @@ public class ImgurGallery {
 		return uploadInfo;
 	}
 	
-	public String getImageInfo (String id) throws ClientProtocolException, IOException, ParseException{
+	public String getImageInfo (String clientID, String imageID) throws ClientProtocolException, IOException, ParseException{
 		
-		String imageLink = "https://api.imgur.com/3/gallery/image/" + id;
+		String imageLink = "https://api.imgur.com/3/gallery/image/" + imageID;
 		
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet(imageLink);
-		httpGet.setHeader("Authorization","client-id "+ID);
+		httpGet.setHeader("Authorization","client-id "+clientID);
 		
 		
 		CloseableHttpResponse httpResponse = httpClient.execute(httpGet);

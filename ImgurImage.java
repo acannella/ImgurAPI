@@ -23,12 +23,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 
 public class ImgurImage {
-	private String ID;
 	
-	public ImgurImage(String cID){
-		ID=cID;
-		
-	}
 public void accDeleteImage(String accessToken, String imageID) throws ClientProtocolException, IOException{
 	CloseableHttpClient httpClient = HttpClients.createDefault();
 	HttpDelete httpDelete = new HttpDelete("https://api.imgur.com/3/image/"+imageID);
@@ -55,17 +50,15 @@ public void accDeleteImage(String accessToken, String imageID) throws ClientProt
 	
 
 	System.out.println(httpResponse.getStatusLine());
-	String toJSON=response.toString();
-	System.out.println(toJSON);
 	
 		httpClient.close();
 	
 }
 
-public void anonDeleteImage(String imageID) throws ClientProtocolException, IOException{
+public void anonDeleteImage(String clientID,String imageID) throws ClientProtocolException, IOException{
 	CloseableHttpClient httpClient = HttpClients.createDefault();
 	HttpDelete httpDelete = new HttpDelete("https://api.imgur.com/3/image/"+imageID);
-	httpDelete.setHeader("Authorization","client-id "+ID);
+	httpDelete.setHeader("Authorization","client-id "+clientID);
 	CloseableHttpResponse httpResponse=null;
 	
 		httpResponse = httpClient.execute(httpDelete);
@@ -97,18 +90,16 @@ public void anonDeleteImage(String imageID) throws ClientProtocolException, IOEx
 	
 	
 
-public String sendImageGET(String imageID) throws ClientProtocolException, IOException {
+public static String sendImageGET(String imageID, String clientID) throws ClientProtocolException, IOException {
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("https://api.imgur.com/3/image/"+imageID);
-		httpGet.setHeader("Authorization","client-id "+ID);
+		httpGet.setHeader("Authorization","client-id "+clientID);
 		
 		
 		CloseableHttpResponse httpResponse=null;
 		
 			httpResponse = httpClient.execute(httpGet);
 		
-	
-
 		BufferedReader reader=null;
 		
 			reader = new BufferedReader(new InputStreamReader(
@@ -132,7 +123,7 @@ public String sendImageGET(String imageID) throws ClientProtocolException, IOExc
 	
 			httpClient.close();
 		
-		System.out.println(httpResponse.getStatusLine());
+		
 		return imageInfo;
 		
 
@@ -197,11 +188,11 @@ public void accUploadImage(String accessToken, String aPath) throws IOException{
 }
 
 
-public void anonUploadImage(String aPath) throws IOException{
+public void anonUploadImage(String clientID, String aPath) throws IOException{
 	
 	CloseableHttpClient httpClient = HttpClients.createDefault();
 	HttpPost httpPost = new HttpPost("https://api.imgur.com/3/upload");
-	httpPost.setHeader("Authorization","client-id "+ID);
+	httpPost.setHeader("Authorization","client-id "+clientID);
 	BufferedImage toEncode;
 	String encodedImage=null;
 	ByteArrayOutputStream bos=new ByteArrayOutputStream();
@@ -301,10 +292,10 @@ public void accUpdateImageInfo(String accessToken,String imageID,String title, S
 	
 }
 
-public void anonUpdateImageInfo(String deleteHash,String imageID,String title, String description) throws ClientProtocolException, IOException{
+public void anonUpdateImageInfo(String clientID,String deleteHash,String imageID,String title, String description) throws ClientProtocolException, IOException{
 	CloseableHttpClient httpClient = HttpClients.createDefault();
 	HttpPost httpPost = new HttpPost("https://api.imgur.com/3/image/"+imageID);
-	httpPost.setHeader("Authorization","client-id "+ID);
+	httpPost.setHeader("Authorization","client-id "+clientID);
 	
 	
 	List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
@@ -346,7 +337,7 @@ public void anonUpdateImageInfo(String deleteHash,String imageID,String title, S
 	
 }
 
-public void favoriteImage(String accessToken, String imageID) throws ClientProtocolException, IOException{
+public static void favoriteImage(String accessToken, String imageID) throws ClientProtocolException, IOException{
 	CloseableHttpClient httpClient = HttpClients.createDefault();
 	HttpPost httpPost = new HttpPost("https://api.imgur.com/3/image/"+imageID+"/favorite");
 	httpPost.setHeader("Authorization","Bearer "+accessToken);

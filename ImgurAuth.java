@@ -41,8 +41,7 @@ public class ImgurAuth {
 	public String getPinURL(){
 		return "https://api.imgur.com/oauth2/authorize?client_id="+clientID+"&response_type=pin";
 	}
-	public void generateAccessToken(String aPin) throws ParseException, ClientProtocolException, IOException{
-		System.out.println("Beginning Authentication");
+	public String generateAccessToken(String aPin) throws ParseException, ClientProtocolException, IOException{
 		pin=aPin;
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		JSONParser parser = new JSONParser();
@@ -84,12 +83,14 @@ public class ImgurAuth {
 		accessToken=jsonResponse.get("access_token").toString();
 		refreshToken=jsonResponse.get("refresh_token").toString();	
 		
+		httpClient.close();
+		
+		return httpResponse.getStatusLine().toString();
 		
 		
 	}
 	
-	//requires authorization have been done already needs to be refreshed every month so I'll probably never need to use this
-	public void useRefreshToken(String token) throws IOException, ParseException{
+	public String useRefreshToken(String token) throws IOException, ParseException{
 		
 		refreshToken=token;
 		CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -126,17 +127,16 @@ public class ImgurAuth {
 	
 		jsonResponse = (JSONObject) parser.parse(toJSON);
 		
-		System.out.println(httpResponse.getStatusLine());
-		
 		accessToken=jsonResponse.get("access_token").toString();
 		
 		httpClient.close();
+		
+		return httpResponse.getStatusLine().toString();
 		
 	}
 	
 	
 	public String getAccessToken(){
-		//depending on how other classes are linked together, this can be used to pass access token 
 		return accessToken;
 	}
 	

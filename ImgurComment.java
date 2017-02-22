@@ -55,9 +55,7 @@ public class ImgurComment {
 	}
 	
 	public static String createComment(String imageID, String comment,String accessToken) throws IOException, ParseException{
-		JSONParser parser = new JSONParser();
 		String createComment= "https://api.imgur.com/3/comment";
-		String commentID=null;
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		String toJSON=null;
 		
@@ -89,14 +87,9 @@ public class ImgurComment {
 			reader.close();
 			toJSON=response.toString();
 			
-			JSONObject jsonResponse=null;
-		
-			jsonResponse = (JSONObject) parser.parse(toJSON);
-			toJSON=jsonResponse.get("data").toString();
-			jsonResponse= (JSONObject) parser.parse(toJSON);
-			commentID=jsonResponse.get("id").toString();
+			
 			System.out.println(httpResponse.getStatusLine());
-			return commentID;
+			return toJSON;
 		
 		
 	}

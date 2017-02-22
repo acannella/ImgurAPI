@@ -8,9 +8,11 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 public class ImgurAccount {
-	//remove static keyword and have it return a String representation of the info
 	public static String accountInfo(String accessToken) throws ClientProtocolException, IOException{
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("https://api.imgur.com/3/account/me");
@@ -30,11 +32,10 @@ public class ImgurAccount {
 			response.append(inputLine);
 		}
 		reader.close();
-		System.out.println("Getting Account Info");
 		
 		String toJSON=response.toString();
 		
-		System.out.println(toJSON);
+		System.out.println(httpResponse.getStatusLine());
 		return toJSON;
 	}
 	public static void sendVeriEmail(String accessToken) throws ClientProtocolException, IOException{
@@ -56,14 +57,13 @@ public class ImgurAccount {
 		}
 		reader.close();
 
-		//add it a check to see which response is sent back, the display text for success or failure
-		String toJSON=response.toString();
-		System.out.println(toJSON);
+		System.out.println(httpResponse.getStatusLine());
 		httpClient.close();
 		
 	}
 	
-	public static void checkVeriEmail(String accessToken) throws ClientProtocolException, IOException{
+	public static String checkVeriEmail(String accessToken) throws IOException, ParseException{
+		String result=null;
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("https://api.imgur.com/3/account/me/verifyemail");
 		httpGet.setHeader("Authorization","Bearer "+accessToken);
@@ -82,15 +82,16 @@ public class ImgurAccount {
 			response.append(inputLine);
 		}
 		reader.close();
-		System.out.println("Getting Account Info");
 		
-		String toJSON=response.toString();
+		result=response.toString();
 		
-		System.out.println(toJSON);
+		System.out.println(httpResponse.getStatusLine());
+		
+		return result;
 		
 	}
 	
-	public String getReplies(String accessToken) throws ClientProtocolException, IOException{
+	public static String getReplies(String accessToken) throws ClientProtocolException, IOException{
 		String replies="";
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("https://api.imgur.com/3/account/me/notifications/replies");
@@ -110,18 +111,15 @@ public class ImgurAccount {
 			response.append(inputLine);
 		}
 		reader.close();
-		System.out.println("Getting Account Info");
+		
 		
 		replies=response.toString();
-		
-		System.out.println(replies);
-		
-		
+		System.out.println(httpResponse.getStatusLine());
 		
 		return replies;
 	}
 
-	public String accImageCount(String accessToken) throws ClientProtocolException, IOException{
+	public static String ImageCount(String accessToken) throws ClientProtocolException, IOException{
 		String imageCount="";
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("https://api.imgur.com/3/account/me/images/count");
@@ -141,18 +139,16 @@ public class ImgurAccount {
 			response.append(inputLine);
 		}
 		reader.close();
-		System.out.println("Getting Account Info");
 		
 		imageCount=response.toString();
 		
-		System.out.println(imageCount);
-		
+		System.out.println(httpResponse.getStatusLine());
 		
 		
 		return imageCount;
 	}
 
-	public String accImageIDs(String accessToken, String page) throws ClientProtocolException, IOException{
+	public static String ImageIDs(String accessToken, String page) throws ClientProtocolException, IOException{
 		String imageArray="";
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("https://api.imgur.com/3/account/me/images/ids/"+page);
@@ -172,18 +168,17 @@ public class ImgurAccount {
 			response.append(inputLine);
 		}
 		reader.close();
-		System.out.println("Getting Account Info");
+		
 		
 		imageArray=response.toString();
 		
-		System.out.println(imageArray);
+		System.out.println(httpResponse.getStatusLine());
 		
-		
-		
+
 		return imageArray;
 	}
 
-	public String imageInfo(String accessToken, String imageID) throws ClientProtocolException, IOException{
+	public static String imageInfo(String accessToken, String imageID) throws ClientProtocolException, IOException{
 		String imageInfo="";
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("https://api.imgur.com/3/account/me/image/"+imageID);
@@ -203,18 +198,16 @@ public class ImgurAccount {
 			response.append(inputLine);
 		}
 		reader.close();
-		System.out.println("Getting Account Info");
+		
 		
 		imageInfo=response.toString();
 		
-		System.out.println(imageInfo);
-		
-		
+		System.out.println(httpResponse.getStatusLine());
 		
 		return imageInfo;
 }
 
-	public String accImages(String accessToken, String page) throws ClientProtocolException, IOException{
+	public static String Images(String accessToken, String page) throws ClientProtocolException, IOException{
 		String images="";
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("https://api.imgur.com/3/account/me/images/"+page);
@@ -234,18 +227,18 @@ public class ImgurAccount {
 			response.append(inputLine);
 		}
 		reader.close();
-		System.out.println("Getting Account Info");
+		
 		
 		images=response.toString();
 		
-		System.out.println(images);
+		System.out.println(httpResponse.getStatusLine());
 		
 		
 		
 		return images;
 	}
 
-	public String accCommentCount(String accessToken) throws ClientProtocolException, IOException{
+	public static String CommentCount(String accessToken) throws ClientProtocolException, IOException{
 		String commentCount="";
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("https://api.imgur.com/3/account/me/comments/count");
@@ -265,18 +258,18 @@ public class ImgurAccount {
 			response.append(inputLine);
 		}
 		reader.close();
-		System.out.println("Getting Account Info");
+		
 		
 		commentCount=response.toString();
 		
-		System.out.println(commentCount);
+		System.out.println(httpResponse.getStatusLine());
 		
 		
 		
 		return commentCount;
 	}
 
-	public String accCommentIDs(String accessToken, String sort, String page) throws ClientProtocolException, IOException{
+	public static String CommentIDs(String accessToken, String sort, String page) throws ClientProtocolException, IOException{
 		String commentIDs="";
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("https://api.imgur.com/3/account/me/comments/ids/"+sort+"/"+page);
@@ -296,18 +289,18 @@ public class ImgurAccount {
 			response.append(inputLine);
 		}
 		reader.close();
-		System.out.println("Getting Account Info");
+		
 		
 		commentIDs=response.toString();
 		
-		System.out.println(commentIDs);
+		System.out.println(httpResponse.getStatusLine());
 		
 		
 		
 		return commentIDs;
 	}
 
-	public String accComment(String accessToken, String commentID) throws ClientProtocolException, IOException{
+	public static String Comment(String accessToken, String commentID) throws ClientProtocolException, IOException{
 		String commentInfo="";
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("https://api.imgur.com/3/account/me/comment/"+commentID);
@@ -327,18 +320,15 @@ public class ImgurAccount {
 			response.append(inputLine);
 		}
 		reader.close();
-		System.out.println("Getting Account Info");
 		
 		commentInfo=response.toString();
 		
-		System.out.println(commentInfo);
-		
-		
+		System.out.println(httpResponse.getStatusLine());
 		
 		return commentInfo;
 	}
 
-	public String accComments(String accessToken, String sort, String page) throws ClientProtocolException, IOException{
+	public static String Comments(String accessToken, String sort, String page) throws ClientProtocolException, IOException{
 		String comments="";
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("https://api.imgur.com/3/account/me/comments/"+sort+"/"+page);
@@ -358,18 +348,18 @@ public class ImgurAccount {
 			response.append(inputLine);
 		}
 		reader.close();
-		System.out.println("Getting Account Info");
+		
 		
 		comments=response.toString();
 		
-		System.out.println(comments);
+		System.out.println(httpResponse.getStatusLine());
 		
 		
 		
 		return comments;
 	}
 
-	public String accAlbumCount(String accessToken) throws ClientProtocolException, IOException{
+	public static String AlbumCount(String accessToken) throws ClientProtocolException, IOException{
 		String albumCount="";
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("https://api.imgur.com/3/account/me/albums/count");
@@ -389,18 +379,18 @@ public class ImgurAccount {
 			response.append(inputLine);
 		}
 		reader.close();
-		System.out.println("Getting Account Info");
+		
 		
 		albumCount=response.toString();
 		
-		System.out.println(albumCount);
+		System.out.println(httpResponse.getStatusLine());
 		
 		
 		
 		return albumCount;
 	}
 
-	public String accAlbumIDs(String accessToken, String page) throws ClientProtocolException, IOException{
+	public static String AlbumIDs(String accessToken, String page) throws ClientProtocolException, IOException{
 		String albumIDs="";
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("https://api.imgur.com/3/account/me/albums/ids/"+page);
@@ -420,18 +410,18 @@ public class ImgurAccount {
 			response.append(inputLine);
 		}
 		reader.close();
-		System.out.println("Getting Account Info");
+		
 		
 		albumIDs=response.toString();
 		
-		System.out.println(albumIDs);
+		System.out.println(httpResponse.getStatusLine());
 		
 		
 		
 		return albumIDs;
 	}
 
-	public String accAlbumInfo(String accessToken, String albumID) throws ClientProtocolException, IOException{
+	public static String AlbumInfo(String accessToken, String albumID) throws ClientProtocolException, IOException{
 		String albumInfo="";
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("https://api.imgur.com/3/account/me/album/"+albumID);
@@ -451,18 +441,18 @@ public class ImgurAccount {
 			response.append(inputLine);
 		}
 		reader.close();
-		System.out.println("Getting Account Info");
+		
 		
 		albumInfo=response.toString();
 		
-		System.out.println(albumInfo);
+		System.out.println(httpResponse.getStatusLine());
 		
 		
 		
 		return albumInfo;
 	}
 
-	public String accAlbums(String accessToken,String page) throws ClientProtocolException, IOException{
+	public static String Albums(String accessToken,String page) throws ClientProtocolException, IOException{
 		String albums="";
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("https://api.imgur.com/3/account/me/albums/"+page);
@@ -482,18 +472,18 @@ public class ImgurAccount {
 			response.append(inputLine);
 		}
 		reader.close();
-		System.out.println("Getting Account Info");
+		
 		
 		albums=response.toString();
 		
-		System.out.println(albums);
+		System.out.println(httpResponse.getStatusLine());
 		
 		
 		
 		return albums;
 	}
 
-	public String accGalleryProfile(String accessToken) throws ClientProtocolException, IOException{
+	public static String GalleryProfile(String accessToken) throws ClientProtocolException, IOException{
 		String galleryProfile="";
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("https://api.imgur.com/3/account/me/gallery_profile");
@@ -524,7 +514,7 @@ public class ImgurAccount {
 		return galleryProfile;
 	}
 
-	public String accountSettingsInfo(String accessToken) throws ClientProtocolException, IOException{
+	public static String accountSettingsInfo(String accessToken) throws ClientProtocolException, IOException{
 		String accountSettings="";
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("https://api.imgur.com/3/account/me/settings");
@@ -544,18 +534,18 @@ public class ImgurAccount {
 			response.append(inputLine);
 		}
 		reader.close();
-		System.out.println("Getting Account Info");
+		
 		
 		accountSettings=response.toString();
 		
-		System.out.println(accountSettings);
+		System.out.println(httpResponse.getStatusLine());
 		
 		
 		
 		return accountSettings;
 	}
 
-	public String accountSubmissions(String accessToken,String page) throws ClientProtocolException, IOException{
+	public static String accountSubmissions(String accessToken,String page) throws ClientProtocolException, IOException{
 		String accountSubs="";
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("https://api.imgur.com/3/account/me/submissions/"+page);
@@ -575,18 +565,18 @@ public class ImgurAccount {
 			response.append(inputLine);
 		}
 		reader.close();
-		System.out.println("Getting Account Info");
+		
 		
 		accountSubs=response.toString();
 		
-		System.out.println(accountSubs);
+		System.out.println(httpResponse.getStatusLine());
 		
 		
 		
 		return accountSubs;
 	}
 
-	public String accountFavorites(String accessToken, String sort, String page) throws ClientProtocolException, IOException{
+	public static String accountFavorites(String accessToken, String sort, String page) throws ClientProtocolException, IOException{
 		String accountFaves="";
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("https://api.imgur.com/3/account/me/favorites/"+page+"/"+sort);
@@ -606,18 +596,18 @@ public class ImgurAccount {
 			response.append(inputLine);
 		}
 		reader.close();
-		System.out.println("Getting Account Info");
+		
 		
 		accountFaves=response.toString();
 		
-		System.out.println(accountFaves);
+		System.out.println(httpResponse.getStatusLine());
 		
 		
 		
 		return accountFaves;
 	}
 
-	public String accGalleryFavorites(String accessToken, String sort, String page) throws ClientProtocolException, IOException{
+	public static String GalleryFavorites(String accessToken, String sort, String page) throws ClientProtocolException, IOException{
 		String galleryFavorites="";
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("https://api.imgur.com/3/account/me/gallery_favorites/"+page+"/"+sort);
@@ -637,11 +627,11 @@ public class ImgurAccount {
 			response.append(inputLine);
 		}
 		reader.close();
-		System.out.println("Getting Account Info");
+		
 		
 		galleryFavorites=response.toString();
 		
-		System.out.println(galleryFavorites);
+		System.out.println(httpResponse.getStatusLine());
 		
 		
 		

@@ -8,19 +8,9 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
-//TO-DO: This entire class needs to be tested 
-
-
 public class ImgurNotification {
 	
-	private String accessToken;
-	
-	public ImgurNotification(String token){
-		accessToken=token;
-	}
-	
-	public String getNotifications() throws IOException{
-		
+	public static String getNotifications(String accessToken) throws IOException{
 		String notificationURL="https://api.imgur.com/3/notification";
 		
 		CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -39,18 +29,13 @@ public class ImgurNotification {
 			response.append(inputLine);
 		}
 		reader.close();
-		System.out.println("Getting Notifications.");
-		
+		httpClient.close();
 		String notifications=response.toString();
-		
-		
-		
-		System.out.println(httpResponse.getStatusLine());
 		
 		return notifications;
 	}
 	
-	public String notificationInfo(String notifID) throws IOException{
+	public static String notificationInfo(String accessToken, String notifID) throws IOException{
 		
 		String notificationURL="https://api.imgur.com/3/notification/"+notifID;
 		
@@ -70,17 +55,16 @@ public class ImgurNotification {
 			response.append(inputLine);
 		}
 		reader.close();
-		System.out.println("Getting Notification Info.");
+		httpClient.close();
 		
 		String notifiInfo=response.toString();
-		
-		System.out.println(httpResponse.getStatusLine());
 		
 		return notifiInfo;
 	}
 	
-	public void markViewed(String notifID) throws IOException{
+	public static String markViewed(String accessToken,String notifID) throws IOException{
 		String markURL="https://api.imgur.com/3/notification/"+notifID;
+		String result=null;
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpPost httpPost = new HttpPost(markURL);
 		httpPost.setHeader("Authorization","Bearer "+accessToken);
@@ -96,9 +80,10 @@ public class ImgurNotification {
 			response.append(inputLine);
 		}
 		reader.close();
-
-		System.out.println(httpResponse.getStatusLine());
 		httpClient.close();
+		result=response.toString();
+		
+		return result;
 	}
 	
 
